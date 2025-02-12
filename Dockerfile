@@ -1,7 +1,6 @@
 # Use a multi-stage build for better performance
 FROM python:3.10 AS builder
 
-# Set the working directory
 WORKDIR /app
 
 # Copy only requirements first (for caching layers)
@@ -23,11 +22,8 @@ RUN rm /etc/nginx/sites-enabled/default
 COPY nginx.conf /etc/nginx/sites-available/nginx.conf
 RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 
-# Expose both Nginx (80) and FastAPI (Heroku/GitHub Actions $PORT)
+# Expose the required port (Heroku will route traffic to this)
 EXPOSE 80
-EXPOSE 8000  # Default Uvicorn port, will be overridden by Heroku/GitHub Actions
 
-# Use bash to start both Nginx and Uvicorn in the same process
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-
+# Start Nginx in the foreground and manage Uvicorn separately
+CMD service nginx start && uvicorn main:app --host 0.0.0.0 --port 8000
