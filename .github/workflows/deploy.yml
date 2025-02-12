@@ -28,5 +28,8 @@ jobs:
           tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
           platforms: linux/amd64
 
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Release application
         run: heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
