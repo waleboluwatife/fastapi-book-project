@@ -28,5 +28,6 @@ EXPOSE 80
 EXPOSE 8000  # Default Uvicorn port, will be overridden by Heroku/GitHub Actions
 
 # Use bash to start both Nginx and Uvicorn in the same process
-CMD bash -c "nginx && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
 
