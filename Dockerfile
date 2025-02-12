@@ -27,6 +27,6 @@ RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 EXPOSE 80
 EXPOSE 8000  # Default Uvicorn port, will be overridden by Heroku/GitHub Actions
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
 
 
