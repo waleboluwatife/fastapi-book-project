@@ -4,10 +4,10 @@ services:
   app:
     build: .
     ports:
-      - "${PORT:-8000}:${PORT:-8000}"  # Map the host port to the same container port
+      - "8000:8000"  # Map the host port to the same container port
     environment:
       - ENVIRONMENT=development
-      - PORT=${PORT:-8000}
+      - PORT=8000
     volumes:
       - .:/app
 
