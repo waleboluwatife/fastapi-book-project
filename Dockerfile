@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Start FastAPI
-CMD ["bash", "-c", "gunicorn main:app --bind 0.0.0.0:$PORT --timeout 30"]
+CMD ["bash", "-c", "gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --timeout 30"]
