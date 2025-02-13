@@ -44,3 +44,15 @@ jobs:
         run: heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Verify Nginx is serving the application
+        run: |
+          sleep 20  # Wait for Heroku to fully deploy
+          RESPONSE=$(curl -sI https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com | grep -i "server:")
+          echo "Server response: $RESPONSE"
+          if echo "$RESPONSE" | grep -qi "nginx"; then
+            echo "✅ SUCCESS: Nginx is correctly serving the application"
+          else
+            echo "❌ ERROR: Uvicorn is being used instead of Nginx"
+            exit 1
+          fi
