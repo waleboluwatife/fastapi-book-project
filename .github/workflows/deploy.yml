@@ -39,19 +39,10 @@ jobs:
           tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
           platforms: linux/amd64
           provenance: false  # Fix for BuildKit 0.11 issue in GitHub Actions
-
-      - name: Build and push Nginx Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./nginx
-          push: true
-          tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/nginx
-          platforms: linux/amd64
         
       - name: Release application
         run: |
           heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
-          heroku container:release nginx -a ${{ secrets.HEROKU_APP_NAME }}
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 

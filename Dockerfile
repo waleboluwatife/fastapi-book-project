@@ -13,8 +13,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
+# Install Nginx and Supervisor
+RUN apt-get update && apt-get install -y nginx supervisor && rm -rf /var/lib/apt/lists/*
+
+# Remove default Nginx config and replace with ours
+RUN rm /etc/nginx/sites-enabled/default
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Copy Supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Expose FastAPI port
-EXPOSE 8000
+EXPOSE 80
 
 # Start FastAPI
-CMD ["bash", "-c", "gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --timeout 30"]
+CMD ["bash", "-c", "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf && gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --timeout 30"]
