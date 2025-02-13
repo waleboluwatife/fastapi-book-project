@@ -27,4 +27,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 80
 
 # Start FastAPI
-CMD ["bash", "-c", "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf && gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --timeout 30"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
