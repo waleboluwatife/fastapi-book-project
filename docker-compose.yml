@@ -3,8 +3,8 @@ version: "3.8"
 services:
   app:
     build: .
-    ports:
-      - "8000:8000"  # Map the host port to the same container port
+    expose:
+      - "8000"  # Expose port to internal network, but don’t publish it
     environment:
       - ENVIRONMENT=development
       - PORT=8000
@@ -17,3 +17,5 @@ services:
       - "80:80"
     depends_on:
       - app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount nginx.conf file
