@@ -27,4 +27,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 80
 
 # Start FastAPI
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD bash -c "sed -i -e 's/\$PORT/'\"$PORT\"'/g' /etc/nginx/conf.d/default.conf && supervisord -n -c /etc/supervisor/conf.d/supervisord.conf"
