@@ -1,4 +1,4 @@
-# FastAPI Book Management API
+# FastAPI Book Mgt API
 
 ## Overview
 
