@@ -1,59 +1,29 @@
-name: Deploy to Heroku (Docker)
+name: Deploy FastAPI to AWS
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3 
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Install Heroku CLI
-        run: curl https://cli-assets.heroku.com/install.sh | sh
-
-      - name: Authenticate Heroku CLI
-        run: heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Set Heroku Stack to Container
-        run: heroku stack:set container -a ${{ secrets.HEROKU_APP_NAME }} 
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          platforms: linux/amd64
-
-      - name: Login to Heroku Container Registry
-        run: echo "${{ secrets.HEROKU_API_KEY }}" | docker login --username=_ --password-stdin registry.heroku.com
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
-          platforms: linux/amd64
-          provenance: false  # Fix for BuildKit 0.11 issue in GitHub Actions
-        
-      - name: Release application
-        run: |
-          heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Verify Nginx is serving the application
-        run: |
-          sleep 20  # Wait for Heroku to fully deploy
-          RESPONSE=$(curl -sI https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com | grep -i "server:")
-          echo "Server response: $RESPONSE"
-          if echo "$RESPONSE" | grep -qi "nginx"; then
-            echo "✅ SUCCESS: Nginx is correctly serving the application"
-          else
-            echo "❌ ERROR: Uvicorn is being used instead of Nginx"
-            exit 1
-          fi
+    - name: SSH into EC2 & Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AWS_HOST }}
+        username: ubuntu
+        key: ${{ secrets.AWS_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu/fastapi-app
+          git pull origin main
+          docker stop fastapi || true
+          docker rm fastapi || true
+          docker build -t fastapi-app .
+          docker run -d -p 8000:8000 --name fastapi fastapi-app
+          sudo systemctl restart nginx
