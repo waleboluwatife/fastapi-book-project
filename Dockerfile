@@ -16,13 +16,6 @@ COPY . .
 # Install Nginx and Supervisor
 RUN apt-get update && apt-get install -y nginx supervisor && rm -rf /var/lib/apt/lists/*
 
-# Remove default Nginx config and replace with ours
-RUN rm /etc/nginx/sites-enabled/default
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
-# Copy Supervisor configuration
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 # Expose FastAPI port
 EXPOSE 8000
 
