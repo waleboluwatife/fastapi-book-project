@@ -20,10 +20,10 @@ jobs:
         username: ubuntu
         key: ${{ secrets.AWS_PRIVATE_KEY }}
         script: |
-          cd /home/ubuntu/fastapi-app
+          cd /home/ubuntu/fastapi-book-project
           git pull origin main
           docker stop fastapi || true
           docker rm fastapi || true
           docker build -t fastapi-app .
-          docker run -d -p 8000:8000 --name fastapi fastapi-app
+          docker run -d -p 8080:8000 --name fastapi fastapi-app
           sudo systemctl restart nginx
