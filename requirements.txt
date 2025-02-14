@@ -1,3 +1,5 @@
-fastapi
+fastapi==0.115.8
 uvicorn
-httpx
+httpcore==1.0.7
+httpx==0.28.1
+pytest==8.3.4
