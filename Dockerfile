@@ -24,7 +24,7 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose FastAPI port
-EXPOSE 80
+EXPOSE 8000
 
 # Start FastAPI
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
